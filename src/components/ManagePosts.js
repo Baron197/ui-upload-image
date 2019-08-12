@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { CustomInput } from 'reactstrap';
+import axios from 'axios';
 
 class ManagePosts extends Component {
-    state = { addImageFileName: 'Select Image...', captionAdd: '' }
+    state = { addImageFileName: 'Select Image...', addImageFile: undefined, captionAdd: '' }
 
     onAddImageFileChange = (e) => {
         // console.log(document.getElementById('addImagePost').files[0])
         // console.log(e.target.files[0])
         if(e.target.files[0]) {
-            this.setState({ addImageFileName: e.target.files[0].name})
+            this.setState({ addImageFileName: e.target.files[0].name, addImageFile: e.target.files[0]})
         }
         else {
-            this.setState({ addImageFileName: 'Select Image...'})
+            this.setState({ addImageFileName: 'Select Image...', addImageFile: undefined })
         }
     }
 
@@ -19,6 +20,35 @@ class ManagePosts extends Component {
         // console.log(e.target.value)
         if(e.target.value.length <= 100) {
             this.setState({ captionAdd: e.target.value })
+        }
+    }
+
+    onBtnAddPostClick = () => {
+        if(this.state.addImageFile) {
+            var formData = new FormData()
+            var headers = {
+                headers: 
+                {'Content-Type': 'multipart/form-data'}
+            }
+
+            var data = {
+                caption: this.state.captionAdd,
+                userId: 1
+            }
+
+            formData.append('image', this.state.addImageFile)
+            formData.append('data', JSON.stringify(data))
+
+            axios.post("http://localhost:1997/post/addpost", formData, headers)
+            .then((res) => {
+                console.log(res.data)
+            })
+            .catch((err) =>{
+                console.log(err)
+            })
+        }
+        else {
+            alert('Image harus diisi!')
         }
     }
 
@@ -51,7 +81,7 @@ class ManagePosts extends Component {
                                     </textarea>
                                 </td>
                                 <td />
-                                <td><input type="button" className="btn btn-success" value="Add" /></td>
+                                <td><input type="button" className="btn btn-success" value="Add" onClick={this.onBtnAddPostClick}/></td>
                                 <td></td>
                             </tr>
                         </tfoot>
