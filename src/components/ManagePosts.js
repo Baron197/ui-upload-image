@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import { CustomInput } from 'reactstrap';
 import axios from 'axios';
+import { API_URL } from '../helpers';
 
 class ManagePosts extends Component {
-    state = { addImageFileName: 'Select Image...', addImageFile: undefined, captionAdd: '' }
+    state = { listPosts: [], addImageFileName: 'Select Image...', addImageFile: undefined, captionAdd: '' }
+
+    componentDidMount() {
+        axios.get(`${API_URL}/post/getposts`)
+        .then((res) => {
+            this.setState({ listPosts: res.data })
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
 
     onAddImageFileChange = (e) => {
         // console.log(document.getElementById('addImagePost').files[0])
@@ -39,9 +49,9 @@ class ManagePosts extends Component {
             formData.append('image', this.state.addImageFile)
             formData.append('data', JSON.stringify(data))
 
-            axios.post("http://localhost:1997/post/addpost", formData, headers)
+            axios.post(API_URL + "/post/addpost", formData, headers)
             .then((res) => {
-                console.log(res.data)
+                this.setState({ listPosts: res.data })
             })
             .catch((err) =>{
                 console.log(err)
@@ -50,6 +60,30 @@ class ManagePosts extends Component {
         else {
             alert('Image harus diisi!')
         }
+    }
+
+    onBtnDeletePostClick = (id) => {
+        axios.delete(`${API_URL}/post/deletepost/${id}`)
+        .then((res) => {
+            this.setState({ listPosts: res.data })
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+    renderListPosts = () => {
+        return this.state.listPosts.map((item) => {
+            return (
+                <tr>
+                    <td>{item.id}</td>
+                    <td><img src={`${API_URL}${item.image}`} alt={`${item.image}`} width={100} /></td>
+                    <td>{item.caption}</td>
+                    <td>{item.userId}</td>
+                    <td><input className="btn btn-primary" type="button" value="Edit" /></td>
+                    <td><input className="btn btn-danger" type="button" value="Delete" onClick={() => this.onBtnDeletePostClick(item.id)} /></td>
+                </tr>
+            )
+        })
     }
 
     render() {
@@ -69,6 +103,7 @@ class ManagePosts extends Component {
                             </tr>
                         </thead>
                         <tbody>
+                            {this.renderListPosts()}
                         </tbody>
                         <tfoot>
                             <tr>
