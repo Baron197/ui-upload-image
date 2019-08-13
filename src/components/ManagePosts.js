@@ -4,7 +4,16 @@ import axios from 'axios';
 import { API_URL } from '../helpers';
 
 class ManagePosts extends Component {
-    state = { listPosts: [], addImageFileName: 'Select Image...', addImageFile: undefined, captionAdd: '' }
+    state = { 
+        listPosts: [], 
+        addImageFileName: 'Select Image...', 
+        addImageFile: undefined, 
+        captionAdd: '',
+        selectedEditPostId: 0,
+        editImageFileName: 'Select Image...',
+        editImageFile: undefined,
+        captionEdit: '' 
+    }
 
     componentDidMount() {
         axios.get(`${API_URL}/post/getposts`)
@@ -26,10 +35,26 @@ class ManagePosts extends Component {
         }
     }
 
+    onEditImageFileChange = (e) => {
+        if(e.target.files[0]) {
+            this.setState({ editImageFileName: e.target.files[0].name, editImageFile: e.target.files[0]})
+        }
+        else {
+            this.setState({ editImageFileName: 'Select Image...', editImageFile: undefined })
+        }
+    }
+
     onCaptionAddChange = (e) => {
         // console.log(e.target.value)
         if(e.target.value.length <= 100) {
             this.setState({ captionAdd: e.target.value })
+        }
+    }
+
+    onCaptionEditChange = (e) => {
+        // console.log(e.target.value)
+        if(e.target.value.length <= 100) {
+            this.setState({ captionEdit: e.target.value })
         }
     }
 
@@ -71,16 +96,59 @@ class ManagePosts extends Component {
         })
     }
 
+    onBtnUpdatePostClick = (id) => {
+        var formData = new FormData()
+        var headers = {
+            headers: 
+            {'Content-Type': 'multipart/form-data'}
+        }
+
+        var data = {
+            caption: this.state.captionEdit,
+        }
+
+       
+        formData.append('image', this.state.editImageFile)
+        formData.append('data', JSON.stringify(data))
+
+        axios.put(API_URL + "/post/editpost/" + id, formData, headers)
+        .then((res) => {
+            this.setState({ listPosts: res.data, selectedEditPostId: 0 })
+        })
+        .catch((err) =>{
+            console.log(err)
+        })
+    }
+
     renderListPosts = () => {
         return this.state.listPosts.map((item) => {
+            if(item.id !== this.state.selectedEditPostId) {
+                return (
+                    <tr>
+                        <td>{item.id}</td>
+                        <td><img src={`${API_URL}${item.image}`} alt={`${item.image}`} width={100} /></td>
+                        <td>{item.caption}</td>
+                        <td>{item.userId}</td>
+                        <td><input className="btn btn-primary" type="button" value="Edit" onClick={() => this.setState({ selectedEditPostId: item.id, captionEdit: item.caption })}/></td>
+                        <td><input className="btn btn-danger" type="button" value="Delete" onClick={() => this.onBtnDeletePostClick(item.id)} /></td>
+                    </tr>
+                )
+            }
+            
             return (
                 <tr>
                     <td>{item.id}</td>
-                    <td><img src={`${API_URL}${item.image}`} alt={`${item.image}`} width={100} /></td>
-                    <td>{item.caption}</td>
+                    <td>
+                        <img src={`${API_URL}${item.image}`} alt={`${item.image}`} width={100} />
+                        <CustomInput id="editImagePost" type="file" label={this.state.editImageFileName} onChange={this.onEditImageFileChange} />
+                    </td>
+                    <td>
+                        <textarea value={this.state.captionEdit} onChange={this.onCaptionEditChange}>
+                        </textarea>
+                    </td>
                     <td>{item.userId}</td>
-                    <td><input className="btn btn-primary" type="button" value="Edit" /></td>
-                    <td><input className="btn btn-danger" type="button" value="Delete" onClick={() => this.onBtnDeletePostClick(item.id)} /></td>
+                    <td><input className="btn btn-primary" type="button" value="Cancel" onClick={() => this.setState({ selectedEditPostId: 0 })} /></td>
+                    <td><input className="btn btn-danger" type="button" value="Save" onClick={() => this.onBtnUpdatePostClick(item.id)} /></td>
                 </tr>
             )
         })
