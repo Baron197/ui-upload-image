@@ -5,7 +5,7 @@ import Header from './components/Header';
 import Home from './components/Home';
 import WaitingVerification from './components/WaitingVerification';
 import Register from './components/Register';
-import Verified from './components/Verified';
+// import Verified from './components/Verified';
 
 class App extends Component {
   render() {
@@ -17,7 +17,7 @@ class App extends Component {
             <Route path="/manageposts" component={ManagePosts} />
             <Route path="/register" component={Register} />
             <Route path="/waitingverification" component={WaitingVerification} />
-            <Route path="/verified" component={Verified} />
+            {/* <Route path="/verified" component={Verified} /> */}
           </div>
       </div>
     )

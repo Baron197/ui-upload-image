@@ -32,11 +32,10 @@ class Register extends Component {
                     <div className="main">
                         <div className="container">
                             <form className="appointment-form" id="appointment-form">
-                                <h2>Welcome to the Hokage Club</h2>
+                                <h2>Welcome to Instagrin</h2>
                                 <div className="form-group-1">
                                     <input ref="username" type="text" name="name" id="name" placeholder="Username" required />
                                     <input ref="email" type="email" name="email" id="email" placeholder="Email" required />
-                                    <input ref="phone" type="number" name="phone_number" id="phone_number" placeholder="Phone number" required />
                                     <input ref="password" type="text" name="password" id="password" placeholder="Password" required />
                                 </div>
                                 <div>
