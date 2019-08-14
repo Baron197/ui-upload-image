@@ -7,7 +7,7 @@ class WaitingVerification extends Component {
                 <h2>Tolong Diperhatikan</h2>
                 <p>Silahkan mengecheck email anda untuk verifikasi account anda</p>
                 <p>
-                    Bila anda tidak mendapatkan email dari Penguasa Club Hokage
+                    Bila anda tidak mendapatkan email dari Penguasa Instagrin
                     harap cemas, dan click button dibawah untuk Resend
                 </p>
                 <input type="button" value="Resend Email" />
