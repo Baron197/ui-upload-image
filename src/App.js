@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import ManagePosts from './components/ManagePosts';
+import Header from './components/Header';
 
 class App extends Component {
   render() {
