@@ -140,7 +140,7 @@ class ManagePosts extends Component {
                     <td>{item.id}</td>
                     <td>
                         <img src={`${API_URL}${item.image}`} alt={`${item.image}`} width={100} />
-                        <CustomInput id="editImagePost" type="file" label={this.state.editImageFileName} onChange={this.onEditImageFileChange} />
+                        <CustomInput id="editImagePost" type="file" label={this.state.editImageFileName} onChange={this.onEditImageFileChange} multiple />
                     </td>
                     <td>
                         <textarea value={this.state.captionEdit} onChange={this.onCaptionEditChange}>

@@ -19,7 +19,7 @@ export default (state = INITIAL_STATE, action) => {
         case AUTH_SYSTEM_ERROR :
             return { ...INITIAL_STATE, error: action.payload }
         case AUTH_LOADING :
-            return { ...state, loading: true }
+            return { ...state, error: '', loading: true }
         default :
             return state;
     }

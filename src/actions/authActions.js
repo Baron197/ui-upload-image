@@ -4,16 +4,17 @@ import {
     AUTH_SYSTEM_ERROR, 
     AUTH_LOADING
 } from './types';
+import { API_URL } from '../helpers';
 
-export const onUserRegister = ({ username, email, phone, password }) => {
+export const onUserRegister = ({ username, email, password }) => {
     return (dispatch) => {
         dispatch({ type: AUTH_LOADING })
-        if(username === '' || email === '' || phone === '' || password === '') {
+        if(username === '' || email === '' || password === '') {
             dispatch({ type: AUTH_SYSTEM_ERROR, payload: 'Semua form diatas wajib diisi!' })
         }
         else {
-            axios.post('http://localhost:1997/auth/register', {
-                username, email, password, phone
+            axios.post(API_URL + '/user/register', {
+                username, email, password
             }).then((res) => {
                 console.log(res)
                 if(res.data.status === 'error') {
