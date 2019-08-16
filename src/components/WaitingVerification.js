@@ -1,6 +1,22 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import { connect } from 'react-redux';
+import { API_URL } from '../helpers';
 
 class WaitingVerification extends Component {
+
+    onBtnResendEmailClick = () => {
+        axios.post(API_URL + '/user/resendemailver', {
+            username: this.props.username,
+            email: this.props.email
+        }).then((res) => {
+            console.log(res.data)
+            alert('Email berhasil terkirim')
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
     render() {
         return (
             <div>
@@ -10,10 +26,14 @@ class WaitingVerification extends Component {
                     Bila anda tidak mendapatkan email dari Penguasa Instagrin
                     harap cemas, dan click button dibawah untuk Resend
                 </p>
-                <input type="button" value="Resend Email" />
+                <input type="button" value="Resend Email" onClick={this.onBtnResendEmailClick} />
             </div>
         )
     }
 }
 
-export default WaitingVerification;
+const mapStateToProps = ({ auth }) => {
+    return { email: auth.email, username: auth.username }
+}
+
+export default connect(mapStateToProps)(WaitingVerification);

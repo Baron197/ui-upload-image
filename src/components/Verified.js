@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import queryString from 'query-string';
+import { API_URL } from '../helpers';
 
 class Verified extends Component { 
     state = { status: 'Loading' }
@@ -10,7 +11,7 @@ class Verified extends Component {
         console.log(params)
         var username = params.username;
         var password = params.password;
-        axios.put(`http://localhost:1997/user/verifikasiemail`, {
+        axios.put(`${API_URL}/user/verifikasiemail`, {
             username,
             password
         }).then((res) => {

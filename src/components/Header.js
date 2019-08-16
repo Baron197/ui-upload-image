@@ -13,6 +13,7 @@ import {
     DropdownItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { onUserLogout } from '../actions';
 
 class Header extends Component {
     constructor(props) {
@@ -27,6 +28,10 @@ class Header extends Component {
         this.setState({
             isOpen: !this.state.isOpen
         });
+    }
+
+    onBtnLogOutClick = () => {
+        this.props.onUserLogout()
     }
 
     render() {
@@ -63,7 +68,7 @@ class Header extends Component {
                                 Hello, {this.props.username}
                             </DropdownToggle>
                             <DropdownMenu right>
-                                <DropdownItem>
+                                <DropdownItem onClick={this.onBtnLogOutClick}>
                                     Logout
                                 </DropdownItem>
                             </DropdownMenu>
@@ -80,4 +85,4 @@ const mapStateToProps = (state) => {
     return { username: state.auth.username }
 }
 
-export default connect(mapStateToProps)(Header);
+export default connect(mapStateToProps, { onUserLogout })(Header);
