@@ -10,6 +10,7 @@ const INITIAL_STATE = {
     email: '', 
     status: '',  
     error: '', 
+    token: '',
     loading: false 
 };
 

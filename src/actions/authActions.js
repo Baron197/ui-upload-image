@@ -33,14 +33,22 @@ export const onUserRegister = ({ username, email, password }) => {
     }
 }
 
-export const keepLogin = (username) => {
+export const keepLogin = () => {
     return (dispatch) => {
-        axios.post(API_URL + '/user/keeplogin', {
-            username
-        }).then((res) => {
+        const token = localStorage.getItem('token')
+        const headers = {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+            }
+        }
+        axios.post(API_URL + '/user/keeplogin',{}, headers).then((res) => {
             dispatch({ type : USER_LOGIN_SUCCESS, payload: res.data })
         }).catch((err) => {
-            console.log(err)
+            console.log(err.response)
+            localStorage.removeItem('token')
+            dispatch({
+                type: USER_LOGOUT
+            })
         })
     }
 }
@@ -57,7 +65,8 @@ export const onUserLogin = ({ username, password }) => {
             }).then((res) => {
                 console.log(res)
                 if(res.data.status !== 'error') {
-                    localStorage.setItem('username', username)
+                    // console.log(res.data.token)
+                    localStorage.setItem('token', res.data.token)
                     dispatch({ type : USER_LOGIN_SUCCESS, payload: res.data })
                 } else {
                     dispatch({ type: AUTH_SYSTEM_ERROR, payload: res.data.message })
@@ -72,7 +81,7 @@ export const onUserLogin = ({ username, password }) => {
 }
 
 export const onUserLogout = () => {
-    localStorage.removeItem('username')
+    localStorage.removeItem('token')
     return {
         type: USER_LOGOUT
     }

@@ -12,10 +12,7 @@ import { keepLogin } from './actions';
 
 class App extends Component {
   componentDidMount() {
-    var username = localStorage.getItem('username')
-    if(username) {
-      this.props.keepLogin(username)
-    }
+    this.props.keepLogin()
   }
 
   render() {
