@@ -36,12 +36,14 @@ export const onUserRegister = ({ username, email, password }) => {
 export const keepLogin = () => {
     return (dispatch) => {
         const token = localStorage.getItem('token')
+        console.log(token)
         const headers = {
             headers: { 
                 'Authorization': `Bearer ${token}`,
             }
         }
         axios.post(API_URL + '/user/keeplogin',{}, headers).then((res) => {
+            localStorage.setItem('token', res.data.token)
             dispatch({ type : USER_LOGIN_SUCCESS, payload: res.data })
         }).catch((err) => {
             console.log(err.response)

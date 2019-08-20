@@ -35,7 +35,7 @@ class Header extends Component {
     }
 
     render() {
-        if(this.props.username === "") {
+        if(this.props.username === "" && this.props.authChecked) {
             return (
                 <div>
                     <Navbar color="light" light expand="md">
@@ -55,26 +55,38 @@ class Header extends Component {
                 </div>
             )
         }
+        else if (this.props.username !== "" && this.props.authChecked) {
+            return (
+                <div>
+                    <Navbar color="light" light expand="md">
+                    <NavbarBrand href="/">{this.props.navBrand}</NavbarBrand>
+                    <NavbarToggler onClick={this.toggle} />
+                    <Collapse isOpen={this.state.isOpen} navbar>
+                        <Nav className="ml-auto" navbar>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav caret>
+                                    Hello, {this.props.username}
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem href="/manageposts">
+                                        Manage Posts
+                                    </DropdownItem>
+                                    <DropdownItem onClick={this.onBtnLogOutClick}>
+                                        Logout
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
+                        </Nav>
+                    </Collapse>
+                    </Navbar>
+                </div>
+            )
+        }
         
         return (
             <div>
                 <Navbar color="light" light expand="md">
                 <NavbarBrand href="/">{this.props.navBrand}</NavbarBrand>
-                <NavbarToggler onClick={this.toggle} />
-                <Collapse isOpen={this.state.isOpen} navbar>
-                    <Nav className="ml-auto" navbar>
-                        <UncontrolledDropdown nav inNavbar>
-                            <DropdownToggle nav caret>
-                                Hello, {this.props.username}
-                            </DropdownToggle>
-                            <DropdownMenu right>
-                                <DropdownItem onClick={this.onBtnLogOutClick}>
-                                    Logout
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </UncontrolledDropdown>
-                    </Nav>
-                </Collapse>
                 </Navbar>
             </div>
         )
@@ -82,7 +94,7 @@ class Header extends Component {
 }
 
 const mapStateToProps = (state) => {
-    return { username: state.auth.username }
+    return { username: state.auth.username, authChecked: state.auth.authChecked }
 }
 
 export default connect(mapStateToProps, { onUserLogout })(Header);

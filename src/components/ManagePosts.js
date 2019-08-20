@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { CustomInput } from 'reactstrap';
 import axios from 'axios';
 import { API_URL } from '../helpers';
+import { Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class ManagePosts extends Component {
     state = { 
@@ -16,7 +18,13 @@ class ManagePosts extends Component {
     }
 
     componentDidMount() {
-        axios.get(`${API_URL}/post/getposts`)
+        const token = localStorage.getItem('token')
+        const headers = {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+            }
+        }
+        axios.get(`${API_URL}/post/getposts`, headers)
         .then((res) => {
             this.setState({ listPosts: res.data })
         }).catch((err) => {
@@ -61,14 +69,16 @@ class ManagePosts extends Component {
     onBtnAddPostClick = () => {
         if(this.state.addImageFile) {
             var formData = new FormData()
+            const token = localStorage.getItem('token')
             var headers = {
-                headers: 
-                {'Content-Type': 'multipart/form-data'}
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
             }
 
             var data = {
-                caption: this.state.captionAdd,
-                userId: 1
+                caption: this.state.captionAdd
             }
 
             formData.append('image', this.state.addImageFile)
@@ -88,7 +98,13 @@ class ManagePosts extends Component {
     }
 
     onBtnDeletePostClick = (id) => {
-        axios.delete(`${API_URL}/post/deletepost/${id}`)
+        const token = localStorage.getItem('token')
+        const headers = {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+            }
+        }
+        axios.delete(`${API_URL}/post/deletepost/${id}`,headers)
         .then((res) => {
             this.setState({ listPosts: res.data })
         }).catch((err) => {
@@ -98,9 +114,12 @@ class ManagePosts extends Component {
 
     onBtnUpdatePostClick = (id) => {
         var formData = new FormData()
+        const token = localStorage.getItem('token')
         var headers = {
-            headers: 
-            {'Content-Type': 'multipart/form-data'}
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            }
         }
 
         var data = {
@@ -155,44 +174,55 @@ class ManagePosts extends Component {
     }
 
     render() {
-        return (
-            <div>
-                <center>
-                    <h1>Manage Posts</h1>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Image</th>
-                                <th>Caption</th>
-                                <th>User Id</th>
-                                <th />
-                                <th />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.renderListPosts()}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td />
-                                <td>
-                                    <CustomInput id="addImagePost" type="file" label={this.state.addImageFileName} onChange={this.onAddImageFileChange} />
-                                </td>
-                                <td>
-                                    <textarea value={this.state.captionAdd} onChange={this.onCaptionAddChange}>
-                                    </textarea>
-                                </td>
-                                <td />
-                                <td><input type="button" className="btn btn-success" value="Add" onClick={this.onBtnAddPostClick}/></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </center>
-            </div>
-        )
+        if(this.props.token !== '' && this.props.authChecked) {
+            return (
+                <div>
+                    <center>
+                        <h1>Manage Posts</h1>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Image</th>
+                                    <th>Caption</th>
+                                    <th>User Id</th>
+                                    <th />
+                                    <th />
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.renderListPosts()}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td />
+                                    <td>
+                                        <CustomInput id="addImagePost" type="file" label={this.state.addImageFileName} onChange={this.onAddImageFileChange} />
+                                    </td>
+                                    <td>
+                                        <textarea value={this.state.captionAdd} onChange={this.onCaptionAddChange}>
+                                        </textarea>
+                                    </td>
+                                    <td />
+                                    <td><input type="button" className="btn btn-success" value="Add" onClick={this.onBtnAddPostClick}/></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </center>
+                </div>
+            )
+        }
+        else if(this.props.authChecked && this.props.token === '') {
+            return <Redirect to="/login" />
+        }
+        
+        return <h1>Loading...</h1>
     }
 }
 
-export default ManagePosts;
+const mapStateToProps = (state) => {
+    return { token: state.auth.token, authChecked: state.auth.authChecked }
+}
+
+export default connect(mapStateToProps)(ManagePosts);
